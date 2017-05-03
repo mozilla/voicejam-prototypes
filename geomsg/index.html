@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1">
+    <title>Context</title>
+    <style>
+      body {
+        height: 100%;
+      }
+      .container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+        padding: 2rem;
+			}
+      .list {
+        flex-direction: column;
+      }
+      .fileToUpload {
+        display: none;
+      }
+			.btn {
+        height: 3rem;
+        width: 3rem;
+				background: red;
+				-webkit-border-radius: 50%;
+				-moz-border-radius: 50%;
+				border-radius: 50%;
+				text-decoration: none;
+        border: 1px solid red;
+			}
+			.btn:hover {
+				background: #red;
+        border: 1px solid silver;
+				text-decoration: none;
+			}
+      .preview {
+        height: 10rem;
+        margin: 1rem;
+        border: 1px solid silver;
+      }
+    </style>
+	</head>
+	<body>
+		<div class="container controls">
+      <label class="btn" for="fileToUpload"></label>
+      <input type="file" id="fileToUpload" class="fileToUpload" accept="image/*,video/*" capture="camera"/>
+		</div>
+		<div class="container list">
+		</div>
+    <script src="app.js"></script>
+	</body>
+</html>
