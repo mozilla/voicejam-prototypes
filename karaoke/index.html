@@ -94,7 +94,7 @@
             videoStream = stream;
             // Stream the data
             video.src = createSrc(stream);
-            video.play();
+            // video.play();
             a.play();
           },
           function(error) {
@@ -106,7 +106,7 @@
           video.pause();
           // Stop the stream
           videoStream.stop();
-          a.stop();
+          a.pause();
         });
       }
     </script>
