@@ -25,12 +25,33 @@
       {
         display: none;
       }
+      #video-container
+      {
+        width: 100%;
+        position: relative;
+      }
 
       #video
       {
-        display: block;
+        display: absolute;
+        top:0;
+        left: 0;
         width: 100%;
+        filter: blur(10px);
+        transition: filter 10s;
       }
+
+      #video.clear {
+        filter: blur(0px);
+      }
+
+      #video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: black;
+      }
+
 
       .button-demo
       {
@@ -47,7 +68,10 @@
     </style>
   </head>
   <body>
-    <video id="video" autoplay="autoplay" controls="true"></video>
+    <div id="video-container">
+      <video id="video" autoplay="autoplay" controls="false"></video>
+      <div id="video-overlay"></div>
+    </div>
     <div class="buttons-wrapper">
       <button id="button-play-gum" class="button-demo" href="#">Play demo</button>
       <button id="button-stop-gum" class="button-demo" href="#">Stop demo</button>
@@ -94,8 +118,10 @@
           function(stream) {
             videoStream = stream;
             // Stream the data
-            // video.src = createSrc(stream);
-            // video.play();
+            video.src = createSrc(stream);
+            video.play();
+            video.classList.add('clear');
+
           },
           function(error) {
             console.log("Video capture error: ", error.code);
