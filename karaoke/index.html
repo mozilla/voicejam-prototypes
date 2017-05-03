@@ -85,6 +85,7 @@
         }
 
         document.getElementById('button-play-gum').addEventListener('click', function() {
+          a.play();
           // Capture user's audio and video source
           navigator.getUserMedia({
             video: true,
@@ -95,7 +96,6 @@
             // Stream the data
             // video.src = createSrc(stream);
             // video.play();
-            a.play();
           },
           function(error) {
             console.log("Video capture error: ", error.code);
