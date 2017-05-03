@@ -7,9 +7,9 @@
     <style>
       body
       {
-        max-width: 500px;
-        margin: 2em auto;
         font-size: 20px;
+        margin: 0;
+        padding: 0;
       }
 
       h1
@@ -25,33 +25,34 @@
       {
         display: none;
       }
-      #video-container
-      {
-        width: 100%;
+
+      #video-container {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vw;
+        border-radius: 100%;
         position: relative;
+        overflow: hidden;
       }
 
       #video
       {
-        display: absolute;
-        top:0;
-        left: 0;
-        width: 100%;
-        filter: blur(10px);
-        transition: filter 10s;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: -30%;
+        filter: blur(20px);
+        transition: filter 20s;
+        width: 150%;
+        visibility: hidden;
       }
 
       #video.clear {
         filter: blur(0px);
+        visibility: visible;
       }
-
-      #video-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background-color: black;
-      }
-
 
       .button-demo
       {
@@ -70,7 +71,6 @@
   <body>
     <div id="video-container">
       <video id="video" autoplay="autoplay" controls="false"></video>
-      <div id="video-overlay"></div>
     </div>
     <div class="buttons-wrapper">
       <button id="button-play-gum" class="button-demo" href="#">Play demo</button>
@@ -121,7 +121,6 @@
             video.src = createSrc(stream);
             video.play();
             video.classList.add('clear');
-
           },
           function(error) {
             console.log("Video capture error: ", error.code);
