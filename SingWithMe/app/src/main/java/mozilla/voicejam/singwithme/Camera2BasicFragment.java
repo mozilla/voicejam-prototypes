@@ -26,6 +26,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -57,6 +59,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.android.camera2raw.R;
@@ -73,8 +76,12 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import jp.wasabeef.blurry.Blurry;
+
 public class Camera2BasicFragment extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+
+    private ImageView imageView;
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -429,7 +436,7 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
+        imageView = (ImageView) view.findViewById(R.id.imageView);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
@@ -839,6 +846,24 @@ public class Camera2BasicFragment extends Fragment
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //File file = new File(jpegBuilder.getSaveLocation());
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                            Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), options);
+
+                            Blurry.with(getActivity())
+                                    .radius(25)
+                                    .sampling(16)
+                                    .from(bitmap)
+                                    .into(imageView);
+
+                        }
+                    });
+
                     unlockFocus();
                 }
             };
