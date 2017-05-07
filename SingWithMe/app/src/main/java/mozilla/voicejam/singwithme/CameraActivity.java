@@ -169,7 +169,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     }
 
-    //ToDo add a complete listener
+
     void start() {
         fragment.takePictureAndBlur(0.5f);
 
@@ -184,8 +184,10 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void onCompletion(MediaPlayer MP) {
-                MP.release();
+            public void onCompletion(MediaPlayer mediaPlayer1) {
+                mediaPlayer1.release();
+                mediaPlayer = null;
+                handler.removeCallbacks(runnable);
             }
         });
     }
@@ -220,10 +222,13 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     void afterHasPermissions() {
         recordSound.setOnClickListener(this);
 
+
         // ToDo disable play btn when there is no voice been record
         playSound.setOnClickListener(this);
         stopRecord.setOnClickListener(this);
         startBtn.setOnClickListener(this);
+
+
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,5 +238,9 @@ public class CameraActivity extends Activity implements View.OnClickListener {
                 fragment.takePictureAndBlur(tmp/4f);
             }
         });
+
+        // hide it
+        recordSound.setVisibility(View.GONE);
+        test.setVisibility(View.GONE);
     }
 }
