@@ -16,12 +16,13 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.camera2raw">
+    package="mozilla.voicejam.singwithme">
 
     <!-- Min/target SDK versions (<uses-sdk>) managed by build.gradle -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <!-- A camera with RAW capability is required to use this application -->
     <uses-feature android:name="android.hardware.camera" />
@@ -30,7 +31,7 @@
     <application android:allowBackup="true"
         android:label="@string/app_name">
 
-        <activity android:name="mozilla.voicejam.singwithme.CameraActivity"
+        <activity android:name=".CameraActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
