@@ -24,13 +24,18 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.logging.LogRecord;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,11 +53,27 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     Button stopRecord;
     @BindView(R.id.start)
     Button startBtn;
+    @BindView(R.id.test)
+    Button test;
 
     private String filePath;
     private static final int MY_PERMISSIONS_REQUEST = 5566;
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
+    private Camera2BasicFragment fragment = Camera2BasicFragment.newInstance();
+    private int songDuration;
+    private Handler handler = new Handler();
+    private long start;
+    private final Runnable runnable = new Runnable(){
+
+        @Override
+        public void run() {
+            long elapse = System.currentTimeMillis() - start;
+            Log.e("time", ""+elapse +"/"+songDuration+"="+elapse/(float)songDuration);
+            fragment.takePictureAndBlur(elapse/(float)songDuration);
+            handler.postDelayed(this, 5000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +81,11 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_camera);
         ButterKnife.bind(this);
 
-        if (null == savedInstanceState) {
+
+
+        if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.container, Camera2BasicFragment.newInstance())
+                    .replace(R.id.container, fragment)
                     .commit();
         }
 
@@ -147,8 +170,17 @@ public class CameraActivity extends Activity implements View.OnClickListener {
     }
 
     void start() {
+        fragment.takePictureAndBlur(0.5f);
+
         mediaPlayer = MediaPlayer.create(this, R.raw.music_sample);
         mediaPlayer.start();
+        mediaPlayer.getCurrentPosition();
+        songDuration=mediaPlayer.getDuration();
+
+        start = System.currentTimeMillis();
+        runnable.run();
+
+
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer MP) {
@@ -168,6 +200,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        handler.removeCallbacks(runnable);
     }
 
     void play() {
@@ -182,6 +215,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    int tmp=0;
     void afterHasPermissions() {
         recordSound.setOnClickListener(this);
 
@@ -189,6 +223,14 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         playSound.setOnClickListener(this);
         stopRecord.setOnClickListener(this);
         startBtn.setOnClickListener(this);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tmp++;
+                tmp = tmp%4;
+                Log.e("jim", ""+tmp/4f);
+                fragment.takePictureAndBlur(tmp/4f);
+            }
+        });
     }
-
 }

@@ -53,4 +53,11 @@
         android:text="start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <Button
+        android:layout_below="@id/record_sound"
+        android:layout_toEndOf="@id/start"
+        android:id="@+id/test"
+        android:text="test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

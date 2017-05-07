@@ -77,7 +77,7 @@ import java.util.concurrent.TimeUnit;
 import jp.wasabeef.blurry.Blurry;
 
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+        implements FragmentCompat.OnRequestPermissionsResultCallback {
 
     private ImageView imageView;
 
@@ -87,6 +87,9 @@ public class Camera2BasicFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+
+    // ToDo put it on arg rather than using global
+    private float ratio = 0;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -433,7 +436,6 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
         imageView = (ImageView) view.findViewById(R.id.imageView);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     }
@@ -772,7 +774,8 @@ public class Camera2BasicFragment extends Fragment
     /**
      * Initiate a still image capture.
      */
-    private void takePicture() {
+    public void takePictureAndBlur(float ratio) {
+        this.ratio = ratio;
         lockFocus();
     }
 
@@ -853,11 +856,35 @@ public class Camera2BasicFragment extends Fragment
                             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                             Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), options);
 
-                            Blurry.with(getActivity())
-                                    .radius(25)
-                                    .sampling(16)
-                                    .from(bitmap)
-                                    .into(imageView);
+
+                            //ToDo figure out better way to adjust the options
+
+                            if (ratio < 0.3f) {
+                                Blurry.with(getActivity())
+                                        .radius(50)
+                                        .sampling(16)
+                                        .from(bitmap)
+                                        .into(imageView);
+                            } else if (ratio < 0.6f) {
+                                Blurry.with(getActivity())
+                                        .radius(30)
+                                        .sampling(8)
+                                        .from(bitmap)
+                                        .into(imageView);
+                            } else if (ratio < 0.9f) {
+                                Blurry.with(getActivity())
+                                        .radius(10)
+                                        .sampling(16)
+                                        .from(bitmap)
+                                        .into(imageView);
+                            } else {
+                                Blurry.with(getActivity())
+                                        .radius(1)
+                                        .sampling(1)
+                                        .from(bitmap)
+                                        .into(imageView);
+                            }
+
 
                         }
                     });
@@ -905,26 +932,6 @@ public class Camera2BasicFragment extends Fragment
                     mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.picture: {
-                takePicture();
-                break;
-            }
-            case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage(R.string.intro_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
-                break;
-            }
         }
     }
 
