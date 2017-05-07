@@ -169,6 +169,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     }
 
+    //ToDo add a complete listener
     void start() {
         fragment.takePictureAndBlur(0.5f);
 
