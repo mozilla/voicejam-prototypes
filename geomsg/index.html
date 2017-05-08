@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1">
+    <title>Geolocated Audio Messages</title>
+    <style>
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 
+          "Segoe UI", "Roboto", "Oxygen", 
+          "Ubuntu", "Cantarell", "Fira Sans", 
+          "Droid Sans", "Helvetica Neue", sans-serif;
+      }
+			#googlemap { 
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: -999; /* Set z-index to 0 as it will be on a layer below the contact form */
+			}
+      .container {
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+        padding: 2rem;
+			}
+      .controls {
+				display: flex;
+				justify-content: center;
+        position: absolute;
+        bottom: 2rem;
+        width: 100%;
+        background: rgba(255, 240, 245, 0.7);
+        z-index: 500;
+      }
+      .list {
+        flex-direction: column;
+      }
+      .fileToUpload {
+        display: none;
+      }
+			.btn {
+        height: 3.5rem;
+        width: 3.5rem;
+				background: red;
+				-webkit-border-radius: 50%;
+				-moz-border-radius: 50%;
+				border-radius: 50%;
+				text-decoration: none;
+        border: 2px solid red;
+			}
+			.btn:hover {
+        border: 2px solid silver;
+				text-decoration: none;
+			}
+      .preview {
+        position: relative;
+        margin: 1rem;
+        border: 2px solid silver;
+        width: 15rem;
+        height: 10rem;
+        overflow: hidden;
+      }
+      .preview img {
+      }
+      .position {
+        height: 2.5rem;
+        color: #fff;
+        position: absolute;
+        bottom: 0;
+        z-index: 200;
+        background-color: silver;
+        width: 100%;
+        /* text centering */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+	</head>
+	<body>
+    <div id="googlemap">
+    </div>
+		<div class="controls">
+      <label class="btn" for="fileToUpload"></label>
+      <input type="file" id="fileToUpload" class="fileToUpload" accept="video/*" capture="camera"/>
+		</div>
+		<div class="container list">
+		</div>
+		<script src="//maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyCKEbMb6o42xyt_bvQfeNEHDTj5TbEOf_8"></script>
+    <script src="app.js"></script>
+	</body>
+</html>
