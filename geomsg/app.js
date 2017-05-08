@@ -1,63 +1,99 @@
-var fileEl = document.querySelector('.fileToUpload');
+(function(window) {
 
+  var positionStr = '25.0020295,121.5310567';
+  var position = positionStr.split(',');
 
-function onFile() {
-	var fileEl = document.querySelector('.fileToUpload');
-	var file = fileEl.files[0];
-  log(file.type);
-  var previewEl = preview(file);
-	navigator.geolocation.getCurrentPosition(function(position) {
-  	console.log(position.coords.latitude, position.coords.longitude);
-	});
-}
+  var map = null;
 
-fileEl.addEventListener('change', onFile);
-
-function log(msg) {
-  console.log(msg);
-  //var htmlStr = '<div>' + msg + '</div>';
-  //document.body.appendChild(new DOMParser().parseFromString(htmlStr, 'text/html').body.firstChild);
-}
-
-function uploadFile() {
-	var fd = new FormData();
-	var count = document.getElementById('fileToUpload').files.length;
-	for (var index = 0; index < count; index ++) {
-		var file = document.getElementById('fileToUpload').files[index];
-		fd.append(file.name, file);
-	}
-	var xhr = new XMLHttpRequest();
-	xhr.upload.addEventListener("progress", uploadProgress, false);
-	xhr.addEventListener("load", uploadComplete, false);
-	xhr.addEventListener("error", uploadFailed, false);
-	xhr.addEventListener("abort", uploadCanceled, false);
-	xhr.open("POST", "savetofile.aspx");
-	xhr.send(fd);
-}
-
-function preview(file) {
-  var el = null;
-  if (file.type.indexOf('video') == 0) {
-	  el = document.createElement('video');
-  }
-  else {
-	  el = document.createElement('img');
+  function onFile() {
+    var fileEl = document.querySelector('.fileToUpload');
+    var file = fileEl.files[0];
+    var previewEl = preview(file);
+    navigator.geolocation.getCurrentPosition(function(position) {
+      console.log(position)
+      var posStr = position.coords.latitude + ', ' + position.coords.longitude;
+      var htmlStr = '<div class="position">' + posStr + '</div>';
+      previewEl.appendChild(toElement(htmlStr));
+    });
   }
 
-  el.classList.add('obj', 'preview');
-  el.file = file;
-  document.querySelector('.list').appendChild(el);
-  var reader = new FileReader();
-  reader.onload = (function(aEl) {
-		return function(e) {
-      aEl.src = e.target.result;
-      if (aEl.tagName == 'VIDEO') {
-        // Hack to show preview
-        aEl.play();
-        aEl.pause();
-      }
+  function showGoogleMap(position) {
+    var latLng = new google.maps.LatLng(position[0], position[1]);
+    var mapOptions = {
+        zoom: 16, // initialize zoom level - the max value is 21
+        streetViewControl: false, // hide the yellow Street View pegman
+        scaleControl: true, // allow users to zoom the Google Map
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        center: latLng
     };
-  })(el);
-  reader.readAsDataURL(file);
-  return el;
-}
+
+    map = new google.maps.Map(document.querySelector('#googlemap'), mapOptions);
+    console.log(map)
+
+    // Show the default red marker at the location
+    marker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      draggable: false,
+      animation: google.maps.Animation.DROP
+    });
+  }
+
+  function onReady() {
+    // Init map
+    showGoogleMap(position);
+
+    // Update location in background map
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      if (pos.coords.latitude != position[0] || pos.coords.longitude != position[1]) {
+        position = [pos.coords.latitude, pos.coords.longitude];
+        map.setCenter({ lat: position[0], lng: position[1] });
+      }
+    });
+
+    // Listen for new recordings
+    document.querySelector('.fileToUpload').addEventListener('change', onFile);
+  }
+  document.addEventListener('DOMContentLoaded', onReady);
+
+  function log(msg) {
+    console.log(msg);
+    //var htmlStr = '<div>' + msg + '</div>';
+    //document.body.appendChild(new DOMParser().parseFromString(htmlStr, 'text/html').body.firstChild);
+  }
+
+  function preview(file) {
+    var previewContainer = document.createElement('div');
+    previewContainer.classList.add('preview');
+    document.querySelector('.list').appendChild(previewContainer);
+    var el = null;
+    if (file.type.indexOf('video') == 0) {
+      el = document.createElement('video');
+    }
+    else {
+      el = document.createElement('img');
+    }
+
+    el.classList.add('obj');
+    el.file = file;
+    previewContainer.appendChild(el);
+    var reader = new FileReader();
+    reader.onload = (function(aEl) {
+      return function(e) {
+        aEl.src = e.target.result;
+        if (aEl.tagName == 'VIDEO') {
+          // TODO: figure out to show preview image
+          el.play();
+          el.pause();
+        }
+      };
+    })(el);
+    reader.readAsDataURL(file);
+    return previewContainer;
+  }
+
+  function toElement(str) {
+    return new DOMParser().parseFromString(str, 'text/html').body.firstChild;
+  }
+
+})(window);
